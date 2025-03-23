@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 public class Bot extends TelegramLongPollingBot {
 
-    final private String BOT_TOKEN = "7902651303:AAFPjXFnWT3YFFTpHspVt_BUqET_plsAnwU";
+    final private String BOT_TOKEN = "***";
     final private String BOT_NAME = "Rreminderr1Bot";
 
 
