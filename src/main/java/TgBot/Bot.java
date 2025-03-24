@@ -34,37 +34,62 @@ public class Bot extends TelegramLongPollingBot {
         return sessionFactory;
     }
 
-    private boolean setUser(Session locSession, User user)
+    private boolean setUser(String chatId)
     {
         try
         {
-            locSession.beginTransaction();
-
+            User user = new User();
+            session.beginTransaction();
+            user.setChatId(Long.parseLong(chatId));
+            session.persist(user);
+            session.getTransaction().commit();
+            return true;
 
         } catch (Exception e)
         {
-            throw new RuntimeException(e);
+            return false;
         }
         finally
         {
             session.close();
         }
 
-        return false;
+
     }
 
-    private boolean getUser(Session locSession, User user, String chatId)
+    private boolean getUser(String chatId)
     {
-        String hql = String.format("from User where UserChatId = %d", Integer.parseInt(chatId));
-        user = (User) session.createQuery(hql).uniqueResult();
 
-        if (user == null) {
-            user = new User(Integer.parseInt(chatId));
-            session.persist(user);
+        try {
+            session = setSession().openSession();
+            session.beginTransaction();
+            String hql = "from User where UserChatId = :chatId";
+            User user = (User) session.createQuery(hql)
+                    .setParameter("chatId", Long.parseLong(chatId))
+                    .uniqueResult();
+
+            if (user == null) {
+
+                session.getTransaction().commit();
+                session.close();
+                return setUser(chatId);
+            }
+
+            session.getTransaction().commit();
+            return true;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
             return false;
         }
+        finally
+        {
+            if (session != null && session.isOpen()) {
+                session.close();
+            }
+        }
 
-        return true;
     }
 
     @Override
@@ -90,25 +115,13 @@ public class Bot extends TelegramLongPollingBot {
                 //Получаем текст сообщения пользователя, отправляем в написанный нами обработчик
                 String response = parseMessage(inMess.getText());
 
-                session = setSession().getCurrentSession();
-
-                String hql = String.format("from User where UserChatId = %d", Integer.parseInt(chatId));
-
-                User user = (User) session.createQuery(hql).uniqueResult();
-
-                if (user == null) {
-                    user = new User(Integer.parseInt(chatId));
-                    session.persist(user);
-                }
-
+                boolean test = getUser(chatId);
                 //Создаем объект класса SendMessage - наш будущий ответ пользователю
                 SendMessage outMess = new SendMessage();
 
                 //Добавляем в наше сообщение id чата, а также наш ответ
                 outMess.setChatId(chatId);
-                outMess.setText(response + " " + chatId);
-
-                session.getTransaction().commit();
+                outMess.setText(response + " " + chatId + " " + test);
 
                 //Отправка в чат
                 execute(outMess);
@@ -116,11 +129,7 @@ public class Bot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-        finally {
-            if (session != null && session.isOpen()) {
-                session.close(); // Закрываем только сессию
-            }
-        }
+
     }
     public String parseMessage(String textMsg) {
         String response;
