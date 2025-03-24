@@ -34,6 +34,39 @@ public class Bot extends TelegramLongPollingBot {
         return sessionFactory;
     }
 
+    private boolean setUser(Session locSession, User user)
+    {
+        try
+        {
+            locSession.beginTransaction();
+
+
+        } catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
+        finally
+        {
+            session.close();
+        }
+
+        return false;
+    }
+
+    private boolean getUser(Session locSession, User user, String chatId)
+    {
+        String hql = String.format("from User where UserChatId = %d", Integer.parseInt(chatId));
+        user = (User) session.createQuery(hql).uniqueResult();
+
+        if (user == null) {
+            user = new User(Integer.parseInt(chatId));
+            session.persist(user);
+            return false;
+        }
+
+        return true;
+    }
+
     @Override
     public String getBotUsername() {
         return BOT_NAME;
@@ -58,8 +91,6 @@ public class Bot extends TelegramLongPollingBot {
                 String response = parseMessage(inMess.getText());
 
                 session = setSession().getCurrentSession();
-
-                session.beginTransaction();
 
                 String hql = String.format("from User where UserChatId = %d", Integer.parseInt(chatId));
 
