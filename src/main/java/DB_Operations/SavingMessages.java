@@ -25,6 +25,8 @@ public class SavingMessages {
         session = sessionFactory.getCurrentSession();
     }
 
+    public SavingMessages() {}
+
     public boolean save(Mess mess) {
         try
         {

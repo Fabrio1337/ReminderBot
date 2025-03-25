@@ -26,6 +26,8 @@ public class GettingUser {
         session = sessionFactory.getCurrentSession();
     }
 
+    public GettingUser() {}
+
     public Object get(String chatId) {
         try
         {

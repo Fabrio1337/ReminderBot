@@ -26,7 +26,8 @@ public class GettingMessages {
 
         session = sessionFactory.getCurrentSession();
     }
-    
+
+    public GettingMessages() {}
 
 
     @PreDestroy

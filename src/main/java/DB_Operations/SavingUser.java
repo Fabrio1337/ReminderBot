@@ -25,6 +25,8 @@ public class SavingUser {
         session = sessionFactory.getCurrentSession();
     }
 
+    public SavingUser() {}
+
     public boolean save(User user) {
         try
         {

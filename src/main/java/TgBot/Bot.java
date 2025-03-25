@@ -1,10 +1,7 @@
 package TgBot;
 
-import Entity.User;
-import Entity.Mess;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+
+
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -15,8 +12,6 @@ public class Bot extends TelegramLongPollingBot {
 
     final private String BOT_TOKEN = "7902651303:AAFPjXFnWT3YFFTpHspVt_BUqET_plsAnwU";
     final private String BOT_NAME = "Rreminderr1Bot";
-    private SessionFactory sessionFactory;
-    private Session session;
 
 
     public Bot()
@@ -24,6 +19,7 @@ public class Bot extends TelegramLongPollingBot {
 
     }
 
+/*
     private SessionFactory setSession()
     {
         sessionFactory = new Configuration()
@@ -91,6 +87,7 @@ public class Bot extends TelegramLongPollingBot {
         }
 
     }
+*/
 
     @Override
     public String getBotUsername() {
@@ -115,13 +112,13 @@ public class Bot extends TelegramLongPollingBot {
                 //Получаем текст сообщения пользователя, отправляем в написанный нами обработчик
                 String response = parseMessage(inMess.getText());
 
-                boolean test = getUser(chatId);
+               /* boolean test = getUser(chatId);*/
                 //Создаем объект класса SendMessage - наш будущий ответ пользователю
                 SendMessage outMess = new SendMessage();
 
                 //Добавляем в наше сообщение id чата, а также наш ответ
                 outMess.setChatId(chatId);
-                outMess.setText(response + " " + chatId + " " + test);
+                outMess.setText(response + " " + chatId);
 
                 //Отправка в чат
                 execute(outMess);
