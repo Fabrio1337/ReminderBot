@@ -1,6 +1,8 @@
 package Entity;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "messages")
@@ -11,69 +13,25 @@ public class Mess {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "message")
-    private String text_message;
+    @Column(name = "message", columnDefinition = "TEXT")
+    private String message;
 
-    @Column(name= "message_date")
-    private String date;
-
-    @Column(name = "delayed_message_time")
-    private String delayed_message_time;
+    @Column(name = "message_date", nullable = false, updatable = false)
+    private LocalDateTime messageDate = LocalDateTime.now();
 
     @Column(name = "delayed_message_date")
-    private String delayed_message_date;
+    private LocalDate delayedMessageDate;
 
-    @Column(name = "is_delayed")
-    private Boolean is_delayed;
+    @Column(name = "is_delayed", nullable = false)
+    private Boolean isDelayed = true;
 
     Mess() {}
 
-    public Mess(String text_message, String date, String delayed_message_time, String delayed_message_date, Boolean is_delayed) {
-        this.text_message = text_message;
-        this.date = date;
-        this.delayed_message_time = delayed_message_time;
-        this.delayed_message_date = delayed_message_date;
-        this.is_delayed = is_delayed;
-    }
-
-    public String getText_message() {
-        return text_message;
-    }
-
-    public void setText_message(String text_message) {
-        this.text_message = text_message;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getDelayed_message_time() {
-        return delayed_message_time;
-    }
-
-    public void setDelayed_message_time(String delayed_message_time) {
-        this.delayed_message_time = delayed_message_time;
-    }
-
-    public String getDelayed_message_date() {
-        return delayed_message_date;
-    }
-
-    public void setDelayed_message_date(String delayed_message_date) {
-        this.delayed_message_date = delayed_message_date;
-    }
-
-    public Boolean getIs_delayed() {
-        return is_delayed;
-    }
-
-    public void setIs_delayed(Boolean is_delayed) {
-        this.is_delayed = is_delayed;
+    public Mess(String message, LocalDateTime messageDate, LocalDate delayedMessageDate, Boolean isDelayed) {
+        this.message = message;
+        this.messageDate = messageDate;
+        this.delayedMessageDate = delayedMessageDate;
+        this.isDelayed = isDelayed;
     }
 
     public int getId() {
@@ -82,5 +40,37 @@ public class Mess {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public LocalDateTime getMessageDate() {
+        return messageDate;
+    }
+
+    public void setMessageDate(LocalDateTime messageDate) {
+        this.messageDate = messageDate;
+    }
+
+    public LocalDate getDelayedMessageDate() {
+        return delayedMessageDate;
+    }
+
+    public void setDelayedMessageDate(LocalDate delayedMessageDate) {
+        this.delayedMessageDate = delayedMessageDate;
+    }
+
+    public Boolean getDelayed() {
+        return isDelayed;
+    }
+
+    public void setDelayed(Boolean delayed) {
+        isDelayed = delayed;
     }
 }

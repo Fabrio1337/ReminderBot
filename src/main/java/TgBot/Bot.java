@@ -2,13 +2,21 @@ package TgBot;
 
 
 
+import SpringConfigs.SpringTGCfg;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
+import java.util.List;
+
 public class Bot extends TelegramLongPollingBot {
+
+    AnnotationConfigApplicationContext context;
+    private Buttons buttons;
 
     final private String BOT_TOKEN = "7902651303:AAFPjXFnWT3YFFTpHspVt_BUqET_plsAnwU";
     final private String BOT_NAME = "Rreminderr1Bot";
@@ -16,7 +24,11 @@ public class Bot extends TelegramLongPollingBot {
 
     public Bot()
     {
-
+        context = new AnnotationConfigApplicationContext(SpringTGCfg.class);
+        buttons = context.getBean("buttons",Buttons.class);
+        SendMessage message = new SendMessage();
+        message.setText("Добро пожаловать! Выберите:");
+        buttons.setSimpleKeyboardMarkup();
     }
 
 /*
@@ -104,24 +116,49 @@ public class Bot extends TelegramLongPollingBot {
         try{
             if(update.hasMessage() && update.getMessage().hasText())
             {
+                String messageText = update.getMessage().getText();
+                long chatId = update.getMessage().getChatId();
 
-                //Извлекаем из объекта сообщение пользователя
-                Message inMess = update.getMessage();
-                //Достаем из inMess id чата пользователя
-                String chatId = inMess.getChatId().toString();
-                //Получаем текст сообщения пользователя, отправляем в написанный нами обработчик
-                String response = parseMessage(inMess.getText());
+                List<String> stopWords = buttons.stopWords(); //скоро будет доделано
 
-               /* boolean test = getUser(chatId);*/
-                //Создаем объект класса SendMessage - наш будущий ответ пользователю
-                SendMessage outMess = new SendMessage();
+                List<String> startWords = buttons.startWords();
 
-                //Добавляем в наше сообщение id чата, а также наш ответ
-                outMess.setChatId(chatId);
-                outMess.setText(response + " " + chatId);
+                if(startWords.contains(messageText))
+                {
+                    SendMessage message = new SendMessage();
+                    message.setText("Добро пожаловать! Выберите:");
+                    message.setChatId(String.valueOf(chatId));
+                    message.setReplyMarkup(buttons.setSimpleKeyboardMarkup());
+                    execute(message);
+                }
 
-                //Отправка в чат
-                execute(outMess);
+                SendMessage message = new SendMessage();
+
+
+
+                String test = "test";
+                message.setText(test);
+                message.setChatId(String.valueOf(chatId));
+                message.setReplyMarkup(buttons.setKeyboardMarkup());
+                execute(message);
+
+                System.out.println("сообщение отправлено");
+
+            }
+            if(update.hasCallbackQuery())
+            {
+                System.out.println("в условии");
+                String callbackQuery = update.getCallbackQuery().getData();
+                long chatId = update.getCallbackQuery().getMessage().getChatId();
+
+                System.out.println("Полученный callbackData: " + callbackQuery);
+
+                SendMessage sendMessage = new SendMessage();
+                sendMessage.setChatId(String.valueOf(chatId));
+
+                sendMessage.setText(callbackQuery + " ваше слово");
+                execute(sendMessage);
+
             }
         } catch (TelegramApiException e) {
             e.printStackTrace();
