@@ -17,6 +17,7 @@ public class Bot extends TelegramLongPollingBot {
 
     AnnotationConfigApplicationContext context;
     private Buttons buttons;
+    private ReceiveMessages receiveMessages;
 
     final private String BOT_TOKEN = "7902651303:AAFPjXFnWT3YFFTpHspVt_BUqET_plsAnwU";
     final private String BOT_NAME = "Rreminderr1Bot";
@@ -26,9 +27,7 @@ public class Bot extends TelegramLongPollingBot {
     {
         context = new AnnotationConfigApplicationContext(SpringTGCfg.class);
         buttons = context.getBean("buttons",Buttons.class);
-        SendMessage message = new SendMessage();
-        message.setText("Добро пожаловать! Выберите:");
-        buttons.setSimpleKeyboardMarkup();
+        receiveMessages = context.getBean("receiveMessages", ReceiveMessages.class);
     }
 
 /*
@@ -123,24 +122,8 @@ public class Bot extends TelegramLongPollingBot {
 
                 List<String> startWords = buttons.startWords();
 
-                if(startWords.contains(messageText))
-                {
-                    SendMessage message = new SendMessage();
-                    message.setText("Добро пожаловать! Выберите:");
-                    message.setChatId(String.valueOf(chatId));
-                    message.setReplyMarkup(buttons.setSimpleKeyboardMarkup());
-                    execute(message);
-                }
+                receiveMessages.receiveMessage(messageText, chatId, startWords, stopWords, buttons.setSimpleKeyboardMarkup());
 
-                SendMessage message = new SendMessage();
-
-
-
-                String test = "test";
-                message.setText(test);
-                message.setChatId(String.valueOf(chatId));
-                message.setReplyMarkup(buttons.setKeyboardMarkup());
-                execute(message);
 
                 System.out.println("сообщение отправлено");
 

@@ -12,18 +12,7 @@ import java.util.List;
 @Component()
 public class Buttons {
 
-    private ReplyKeyboardMarkup replyKeyboardMarkup;
-
     public Buttons() {}
-
-    @PostConstruct
-    public void init() {
-
-
-
-        //метод для создания кнопок
-
-    }
 
     public List<String> stopWords()
     {
@@ -35,27 +24,6 @@ public class Buttons {
     {
         List<String> startWords = List.of("старт", "/старт", "start", "/start");
         return startWords;
-    }
-
-
-
-
-    public InlineKeyboardMarkup setKeyboardMarkup() {
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-
-        InlineKeyboardButton test = new InlineKeyboardButton();
-        test.setText("Нажми");
-        test.setCallbackData("test");
-
-        List<InlineKeyboardButton> row = new ArrayList<>();
-        row.add(test);
-        rows.add(row);
-
-
-        inlineKeyboardMarkup.setKeyboard(rows);
-
-        return inlineKeyboardMarkup;
     }
 
     public InlineKeyboardMarkup setSimpleKeyboardMarkup() {
