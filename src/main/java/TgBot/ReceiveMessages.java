@@ -16,33 +16,13 @@ import java.util.List;
 public class ReceiveMessages {
     private SavingMessages savingMessages;
     private SavingUser savingUser;
-    private MessagesHandler messagesHandler;
 
     @Autowired
-    public ReceiveMessages(SavingMessages savingMessages, SavingUser savingUser,  MessagesHandler messagesHandler) {
+    public ReceiveMessages(SavingMessages savingMessages, SavingUser savingUser) {
         this.savingMessages = savingMessages;
         this.savingUser = savingUser;
-        this.messagesHandler = messagesHandler;
     }
 
-    public SendMessage receiveMessage(String messageText, long chatId, List<String> startWords, List<String> stopWords, InlineKeyboardMarkup keyboardMarkup)
-    {
-        if(startWords.contains(messageText))
-        {
-            SendMessage message = new SendMessage();
-            message.setText("Добро пожаловать! Выберите:");
-            message.setChatId(String.valueOf(chatId));
-            message.setReplyMarkup(keyboardMarkup);
-            //execute(message); --будет заменен на соответствующий метод из класса MessagesHandler
-            return message; //просто затычка которая будет заменена на результат метода из класса MessagesHandler
-        }
-        else
-        {
-            SendMessage message = new SendMessage();
-            message.setText("Я вас не понимаю :( Список моих команд /command");
-            return message; //просто затычка которая будет заменена на результат метода из класса MessagesHandler
-        }
-    }
 
     public boolean saveMessage(String message) {
         try

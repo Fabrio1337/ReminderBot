@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "messages")
-public class Mess {
+public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,9 +25,9 @@ public class Mess {
     @Column(name = "is_delayed", nullable = false)
     private Boolean isDelayed = true;
 
-    Mess() {}
+    Message() {}
 
-    public Mess(String message, LocalDateTime messageDate, LocalDate delayedMessageDate, Boolean isDelayed) {
+    public Message(String message, LocalDateTime messageDate, LocalDate delayedMessageDate, Boolean isDelayed) {
         this.message = message;
         this.messageDate = messageDate;
         this.delayedMessageDate = delayedMessageDate;

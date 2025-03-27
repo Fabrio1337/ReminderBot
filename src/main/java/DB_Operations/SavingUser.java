@@ -1,6 +1,6 @@
 package DB_Operations;
 
-import Entity.Mess;
+import Entity.Message;
 import Entity.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -12,22 +12,10 @@ import javax.annotation.PreDestroy;
 
 @Component
 public class SavingUser {
-    private SessionFactory sessionFactory;
-    private Session session;
-
-    @PostConstruct
-    private void initialize() {
-        sessionFactory = new Configuration()
-                .configure("hibernate.cfg.xml")
-                .addAnnotatedClass(Mess.class)
-                .addAnnotatedClass(User.class)
-                .buildSessionFactory();
-        session = sessionFactory.getCurrentSession();
-    }
 
     public SavingUser() {}
 
-    public boolean save(User user) {
+    public boolean save(Session session, User user) {
         try
         {
             session.beginTransaction();
@@ -42,10 +30,5 @@ public class SavingUser {
     }
 
 
-    @PreDestroy
-    private void close() {
-        if (session != null) session.close();
-        if (sessionFactory != null) sessionFactory.close();
-    }
 
 }

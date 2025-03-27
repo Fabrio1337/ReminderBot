@@ -17,7 +17,7 @@ public class User {
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "user_id")
-    private List<Mess> messages;
+    private List<Message> messages;
 
     public User() {}
 
@@ -41,11 +41,11 @@ public class User {
         this.UserChatId = UserChatId;
     }
 
-    public List<Mess> getMessages() {
+    public List<Message> getMessages() {
         return messages;
     }
 
-    public void setMessages(List<Mess> messages) {
+    public void setMessages(List<Message> messages) {
         this.messages = messages;
     }
 }

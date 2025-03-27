@@ -2,6 +2,7 @@ package TgBot;
 
 
 
+import SpringConfigs.SpringDBCfg;
 import SpringConfigs.SpringTGCfg;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -17,17 +18,18 @@ public class Bot extends TelegramLongPollingBot {
 
     AnnotationConfigApplicationContext context;
     private Buttons buttons;
-    private ReceiveMessages receiveMessages;
+    private MessagesHandler messagesHandler;
 
     final private String BOT_TOKEN = "7902651303:AAFPjXFnWT3YFFTpHspVt_BUqET_plsAnwU";
     final private String BOT_NAME = "Rreminderr1Bot";
 
+    private boolean is_callback = false;
 
     public Bot()
     {
-        context = new AnnotationConfigApplicationContext(SpringTGCfg.class);
+        context = new AnnotationConfigApplicationContext(SpringTGCfg.class, SpringDBCfg.class);
         buttons = context.getBean("buttons",Buttons.class);
-        receiveMessages = context.getBean("receiveMessages", ReceiveMessages.class);
+        messagesHandler = context.getBean("messagesHandler", MessagesHandler.class);
     }
 
 /*
@@ -117,30 +119,41 @@ public class Bot extends TelegramLongPollingBot {
             {
                 String messageText = update.getMessage().getText();
                 long chatId = update.getMessage().getChatId();
+                String firstName = update.getMessage().getFrom().getFirstName();
 
-                List<String> stopWords = buttons.stopWords(); //скоро будет доделано
 
-                List<String> startWords = buttons.startWords();
 
-                receiveMessages.receiveMessage(messageText, chatId, startWords, stopWords, buttons.setSimpleKeyboardMarkup());
+                if(is_callback)
+                {
+                    SendMessage returnCallbackMessage = messagesHandler.saveMessageInDB(messageText);
+                }
 
+
+                SendMessage sendMessage = messagesHandler.receiveMessage(messageText,
+                        chatId,
+                        buttons.setSimpleKeyboardMarkup(),
+                        buttons.startWords(),
+                        buttons.stopWords(),firstName );
+
+                execute(sendMessage);
 
                 System.out.println("сообщение отправлено");
 
             }
             if(update.hasCallbackQuery())
             {
-                System.out.println("в условии");
-                String callbackQuery = update.getCallbackQuery().getData();
-                long chatId = update.getCallbackQuery().getMessage().getChatId();
 
-                System.out.println("Полученный callbackData: " + callbackQuery);
+                long callbackChatId = update.getCallbackQuery().getMessage().getChatId();
+                String callbackData = update.getCallbackQuery().getData();
 
-                SendMessage sendMessage = new SendMessage();
-                sendMessage.setChatId(String.valueOf(chatId));
+                System.out.println("Полученный callbackData: " + callbackData);
 
-                sendMessage.setText(callbackQuery + " ваше слово");
+                SendMessage sendMessage = messagesHandler.callbackMessage(callbackChatId, callbackData);
+
                 execute(sendMessage);
+
+                is_callback = true;
+                System.out.println(is_callback);
 
             }
         } catch (TelegramApiException e) {
@@ -148,17 +161,5 @@ public class Bot extends TelegramLongPollingBot {
         }
 
     }
-    public String parseMessage(String textMsg) {
-        String response;
 
-        //Сравниваем текст пользователя с нашими командами, на основе этого формируем ответ
-        if(textMsg.equals("/start"))
-            response = "Приветствую. Жми /get";
-        else if(textMsg.equals("/get"))
-            response = "тест";
-        else
-            response = "Сообщение не распознано";
-
-        return response;
-    }
 }

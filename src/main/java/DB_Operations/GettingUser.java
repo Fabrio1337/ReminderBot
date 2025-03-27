@@ -1,6 +1,6 @@
 package DB_Operations;
 
-import Entity.Mess;
+import Entity.Message;
 import Entity.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -13,22 +13,10 @@ import javax.annotation.PreDestroy;
 
 @Component
 public class GettingUser {
-    private SessionFactory sessionFactory;
-    private Session session;
-
-    @PostConstruct
-    private void initialize() {
-        sessionFactory = new Configuration()
-                .configure("hibernate.cfg.xml")
-                .addAnnotatedClass(Mess.class)
-                .addAnnotatedClass(User.class)
-                .buildSessionFactory();
-        session = sessionFactory.getCurrentSession();
-    }
 
     public GettingUser() {}
 
-    public Object get(String chatId) {
+    public Object get(Session session, String chatId) {
         try
         {
             session.beginTransaction();
@@ -46,9 +34,5 @@ public class GettingUser {
     }
 
 
-    @PreDestroy
-    private void close() {
-        if (session != null) session.close();
-        if (sessionFactory != null) sessionFactory.close();
-    }
+
 }
