@@ -125,17 +125,19 @@ public class Bot extends TelegramLongPollingBot {
 
                 if(is_callback)
                 {
-                    SendMessage returnCallbackMessage = messagesHandler.saveMessageInDB(messageText);
+                    SendMessage returnCallbackMessage = messagesHandler.saveMessageInDB(chatId, messageText);
+                    execute(returnCallbackMessage);
                 }
+                else
+                {
+                    SendMessage sendMessage = messagesHandler.receiveMessage(messageText,
+                            chatId,
+                            buttons.setSimpleKeyboardMarkup(),
+                            buttons.startWords(),
+                            buttons.stopWords(),firstName );
 
-
-                SendMessage sendMessage = messagesHandler.receiveMessage(messageText,
-                        chatId,
-                        buttons.setSimpleKeyboardMarkup(),
-                        buttons.startWords(),
-                        buttons.stopWords(),firstName );
-
-                execute(sendMessage);
+                    execute(sendMessage);
+                }
 
                 System.out.println("сообщение отправлено");
 

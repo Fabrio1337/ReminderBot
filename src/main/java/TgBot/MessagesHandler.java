@@ -60,14 +60,18 @@ public class MessagesHandler {
         }
     }
 
-    public SendMessage saveMessageInDB(String message)
+    public SendMessage saveMessageInDB(long chatId,String message)
     {
+        SendMessage sendMessage = sendMessages.sendTimeMessage(chatId, message);
 
+        return sendMessage;
     }
 
     public SendMessage timeCallbackMessage(long chatId)
     {
         SendMessage message;
+
+        return null;
     }
 
 

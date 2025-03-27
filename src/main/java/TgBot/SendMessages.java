@@ -52,9 +52,14 @@ public class SendMessages
         return sendMessage;
     }
 
-    public SendMessage sendTimeMessage(long chatId)
+    public SendMessage sendTimeMessage(long chatId, String message)
     {
         SendMessage sendMessage = new SendMessage();
+        sendMessage.setText("Сохранил ваше сообщение для напоминаний\uD83D\uDC4C \n" +
+                "напишите теперь дату когда нужно напомнить\uD83D\uDCCB \n" +
+                "P.S. пишите в таком формате DD.MM.YYYY HH.MM\n" +
+                "P.S.S расшифровка: день.месяц.год час.минута");
+        sendMessage.setChatId(String.valueOf(chatId));
 
         return  sendMessage;
     }
