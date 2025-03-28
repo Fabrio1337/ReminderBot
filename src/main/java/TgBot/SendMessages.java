@@ -28,7 +28,6 @@ public class SendMessages
 
         sendMessage.setText(firstName + ", Добро пожаловать!\n" +
                 "Я - бот для напоминаний \uD83D\uDE0A \n" +
-                "Все мои команды /command\n" +
                 "Если хотите  сразу отложить сообщение, то выберите: ");
         sendMessage.setChatId(String.valueOf(chatId));
 
@@ -62,6 +61,17 @@ public class SendMessages
         sendMessage.setText("Хорошо☺\uFE0F\n" +
                 "Я запомнил ваше сообщение и время\uD83D\uDCCE");
         sendMessage.setChatId(String.valueOf(chatId));
+
+        return sendMessage;
+    }
+
+    public SendMessage sendErrorTimeMessage(long chatId)
+    {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(String.valueOf(chatId));
+        sendMessage.setText("*❌ Вы ввели неправильную дату и время.*\n\n" +
+                "⏳ Пожалуйста, введите дату и время, которые _не раньше текущего момента_.");
+        sendMessage.setParseMode("Markdown");
 
         return sendMessage;
     }

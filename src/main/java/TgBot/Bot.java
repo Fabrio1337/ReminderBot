@@ -22,7 +22,7 @@ public class Bot extends TelegramLongPollingBot {
     final private String BOT_NAME = "Rreminderr1Bot";
 
     private boolean is_callback = false;
-    private boolean is_time_message = false;
+
 
     public Bot()
     {
@@ -58,8 +58,7 @@ public class Bot extends TelegramLongPollingBot {
                 {
                     SendMessage returnCallbackMessage = messagesHandler.saveMessageInDB(chatId, messageText);
                     execute(returnCallbackMessage);
-                    is_callback = false;
-                    is_time_message = true;
+                    is_callback = messagesHandler.isCallback();
                 }
                 else
                 {
@@ -73,7 +72,6 @@ public class Bot extends TelegramLongPollingBot {
                 }
 
                 System.out.println("сообщение отправлено");
-                System.out.println("is_time_message: " + is_time_message);
 
             }
             if(update.hasCallbackQuery())

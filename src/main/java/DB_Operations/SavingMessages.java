@@ -26,12 +26,15 @@ public class SavingMessages {
             if (user == null) {
                 user = new User();
                 user.setChatId(chatId);
+                session.persist(user);
             }
 
 
             Message message = new Message(userMessage, timeMessage, true);
 
             message.setUser(user);
+
+
 
             session.persist(message);
             session.getTransaction().commit();

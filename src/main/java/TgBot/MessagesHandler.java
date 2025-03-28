@@ -6,13 +6,17 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Component
 @Scope("prototype")
 public class MessagesHandler {
-    private SendMessages sendMessages;
-    private ReceiveMessages receiveMessages;
+    private final SendMessages sendMessages;
+    private final ReceiveMessages receiveMessages;
+    private boolean is_callback = false;
 
     @Autowired
     MessagesHandler(SendMessages sendMessages, ReceiveMessages receiveMessages)
@@ -35,9 +39,7 @@ public class MessagesHandler {
         }
         else
         {
-            SendMessage message = sendMessages.sendErrorMessage(chatId);
-
-            return message;
+            return sendMessages.sendErrorMessage(chatId);
         }
     }
 
@@ -45,10 +47,10 @@ public class MessagesHandler {
     {
         if(callbackData.equals("delayed"))
         {
-            SendMessage message = sendMessages.sendDelayedMessage(chatId);
-            return message;
+
+            return sendMessages.sendDelayedMessage(chatId);
         }
-        if(callbackData.equals("list_delayed"))
+        else if(callbackData.equals("list_delayed"))
         {
             return null;
         }
@@ -60,25 +62,57 @@ public class MessagesHandler {
 
     public SendMessage saveMessageInDB(long chatId,String message)
     {
-        SendMessage sendMessage = sendMessages.sendCompleteMessage(chatId);
-        if(sendMessage != null)
+        return messageSplit(message, chatId);
+    }
+
+    private SendMessage messageSplit(String message, long chatId)
+    {
+        try
         {
-            messageSplit(message, chatId);
+            String [] splitted = message.split("\n");
+
+            String dateTime = splitted[splitted.length - 1].trim();
+            String messageText = message.substring(0, message.lastIndexOf("\n")).trim();
+
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+
+
+            LocalDateTime localDateTime = LocalDateTime.now();
+
+            LocalDateTime delayedDateTime = LocalDateTime.parse(dateTime, formatter);
+
+            if(delayedDateTime.isAfter(localDateTime))
+            {
+                receiveMessages.saveMessage(messageText, dateTime, chatId);
+                setIs_callback(false);
+                return sendMessages.sendCompleteMessage(chatId);
+
+            }
+            else
+            {
+                setIs_callback(true);
+                return sendMessages.sendErrorTimeMessage(chatId);
+            }
+        }
+        catch(DateTimeException e)
+        {
+            setIs_callback(true);
+            return sendMessages.sendErrorTimeMessage(chatId);
         }
 
-        return sendMessage;
     }
 
-    private void messageSplit(String message, long chatId)
+    private void setIs_callback(boolean is_callback)
     {
-        String [] splitted = message.split("\n");
-
-        String dateTime = splitted[splitted.length - 1].trim();
-        String messageText = message.substring(0, message.lastIndexOf("\n")).trim();
-
-        receiveMessages.saveMessage(messageText, dateTime, chatId);
-
+        this.is_callback = is_callback;
     }
+
+    public boolean isCallback()
+    {
+        return is_callback;
+    }
+
 
 
 
