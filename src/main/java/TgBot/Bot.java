@@ -6,9 +6,7 @@ import SpringConfigs.SpringDBCfg;
 import SpringConfigs.SpringTGCfg;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
@@ -24,6 +22,7 @@ public class Bot extends TelegramLongPollingBot {
     final private String BOT_NAME = "Rreminderr1Bot";
 
     private boolean is_callback = false;
+    private boolean is_time_message = false;
 
     public Bot()
     {
@@ -32,75 +31,7 @@ public class Bot extends TelegramLongPollingBot {
         messagesHandler = context.getBean("messagesHandler", MessagesHandler.class);
     }
 
-/*
-    private SessionFactory setSession()
-    {
-        sessionFactory = new Configuration()
-                .configure("hibernate.cfg.xml")
-                .addAnnotatedClass(Mess.class)
-                .addAnnotatedClass(User.class)
-                .buildSessionFactory();
-        return sessionFactory;
-    }
 
-    private boolean setUser(String chatId)
-    {
-        try
-        {
-            User user = new User();
-            session.beginTransaction();
-            user.setChatId(Long.parseLong(chatId));
-            session.persist(user);
-            session.getTransaction().commit();
-            return true;
-
-        } catch (Exception e)
-        {
-            return false;
-        }
-        finally
-        {
-            session.close();
-        }
-
-
-    }
-
-    private boolean getUser(String chatId)
-    {
-
-        try {
-            session = setSession().openSession();
-            session.beginTransaction();
-            String hql = "from User where UserChatId = :chatId";
-            User user = (User) session.createQuery(hql)
-                    .setParameter("chatId", Long.parseLong(chatId))
-                    .uniqueResult();
-
-            if (user == null) {
-
-                session.getTransaction().commit();
-                session.close();
-                return setUser(chatId);
-            }
-
-            session.getTransaction().commit();
-            return true;
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return false;
-        }
-        finally
-        {
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
-        }
-
-    }
-*/
 
     @Override
     public String getBotUsername() {
@@ -127,6 +58,8 @@ public class Bot extends TelegramLongPollingBot {
                 {
                     SendMessage returnCallbackMessage = messagesHandler.saveMessageInDB(chatId, messageText);
                     execute(returnCallbackMessage);
+                    is_callback = false;
+                    is_time_message = true;
                 }
                 else
                 {
@@ -140,6 +73,7 @@ public class Bot extends TelegramLongPollingBot {
                 }
 
                 System.out.println("сообщение отправлено");
+                System.out.println("is_time_message: " + is_time_message);
 
             }
             if(update.hasCallbackQuery())

@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 
@@ -62,17 +60,26 @@ public class MessagesHandler {
 
     public SendMessage saveMessageInDB(long chatId,String message)
     {
-        SendMessage sendMessage = sendMessages.sendTimeMessage(chatId, message);
+        SendMessage sendMessage = sendMessages.sendCompleteMessage(chatId);
+        if(sendMessage != null)
+        {
+            messageSplit(message, chatId);
+        }
 
         return sendMessage;
     }
 
-    public SendMessage timeCallbackMessage(long chatId)
+    private void messageSplit(String message, long chatId)
     {
-        SendMessage message;
+        String [] splitted = message.split("\n");
 
-        return null;
+        String dateTime = splitted[splitted.length - 1].trim();
+        String messageText = message.substring(0, message.lastIndexOf("\n")).trim();
+
+        receiveMessages.saveMessage(messageText, dateTime, chatId);
+
     }
+
 
 
 }

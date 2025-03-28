@@ -31,4 +31,8 @@ public class SetSession {
         if (session != null) session.close();
         if (sessionFactory != null) sessionFactory.close();
     }
+
+    public Session getSession() {
+        return session;
+    }
 }

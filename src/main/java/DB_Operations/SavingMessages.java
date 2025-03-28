@@ -3,12 +3,11 @@ package DB_Operations;
 import Entity.Message;
 import Entity.User;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+
 
 @Component
 public class SavingMessages {
@@ -16,16 +15,31 @@ public class SavingMessages {
 
     public SavingMessages() {}
 
-    public boolean save(Session session, Message message) {
-        try
-        {
+    public boolean saveMessage(Session session, String userMessage,String timeMessage, long chatId) {
+        try {
             session.beginTransaction();
-            session.save(message);
+
+            User user =(User) session.createQuery("FROM User WHERE UserChatId = :chatId")
+                    .setParameter("chatId", chatId)
+                    .uniqueResult();
+
+            if (user == null) {
+                user = new User();
+                user.setChatId(chatId);
+            }
+
+
+            Message message = new Message(userMessage, timeMessage, true);
+
+            message.setUser(user);
+
+            session.persist(message);
             session.getTransaction().commit();
+
             return true;
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

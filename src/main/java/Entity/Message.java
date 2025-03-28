@@ -1,5 +1,7 @@
 package Entity;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,20 +18,20 @@ public class Message {
     @Column(name = "message", columnDefinition = "TEXT")
     private String message;
 
-    @Column(name = "message_date", nullable = false, updatable = false)
-    private LocalDateTime messageDate = LocalDateTime.now();
-
     @Column(name = "delayed_message_date")
-    private LocalDate delayedMessageDate;
+    private String delayedMessageDate;
 
     @Column(name = "is_delayed", nullable = false)
     private Boolean isDelayed = true;
 
-    Message() {}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public Message(String message, LocalDateTime messageDate, LocalDate delayedMessageDate, Boolean isDelayed) {
+    public Message() {}
+
+    public Message(String message, String delayedMessageDate, Boolean isDelayed) {
         this.message = message;
-        this.messageDate = messageDate;
         this.delayedMessageDate = delayedMessageDate;
         this.isDelayed = isDelayed;
     }
@@ -50,19 +52,11 @@ public class Message {
         this.message = message;
     }
 
-    public LocalDateTime getMessageDate() {
-        return messageDate;
-    }
-
-    public void setMessageDate(LocalDateTime messageDate) {
-        this.messageDate = messageDate;
-    }
-
-    public LocalDate getDelayedMessageDate() {
+    public String getDelayedMessageDate() {
         return delayedMessageDate;
     }
 
-    public void setDelayedMessageDate(LocalDate delayedMessageDate) {
+    public void setDelayedMessageDate(String delayedMessageDate) {
         this.delayedMessageDate = delayedMessageDate;
     }
 
@@ -72,5 +66,13 @@ public class Message {
 
     public void setDelayed(Boolean delayed) {
         isDelayed = delayed;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -6,8 +6,7 @@ import Entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+
 
 import java.util.List;
 
@@ -16,24 +15,18 @@ import java.util.List;
 public class ReceiveMessages {
     private SavingMessages savingMessages;
     private SavingUser savingUser;
+    private SetSession setSession;
 
     @Autowired
-    public ReceiveMessages(SavingMessages savingMessages, SavingUser savingUser) {
+    public ReceiveMessages(SavingMessages savingMessages, SavingUser savingUser, SetSession setSession) {
         this.savingMessages = savingMessages;
         this.savingUser = savingUser;
+        this.setSession = setSession;
     }
 
 
-    public boolean saveMessage(String message) {
-        try
-        {
-
-            return  true;
-        }
-        catch(Exception e)
-        {
-            return false;
-        }
+    public boolean saveMessage(String message, String timeMessage, long chatId) {
+       return savingMessages.saveMessage(setSession.getSession(), message, timeMessage, chatId);
     }
 
     public boolean saveUser(User user) {

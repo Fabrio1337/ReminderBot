@@ -28,7 +28,7 @@ public class SendMessages
 
         sendMessage.setText(firstName + ", Добро пожаловать!\n" +
                 "Я - бот для напоминаний \uD83D\uDE0A \n" +
-                "Все мои команды '/command'\n" +
+                "Все мои команды /command\n" +
                 "Если хотите  сразу отложить сообщение, то выберите: ");
         sendMessage.setChatId(String.valueOf(chatId));
 
@@ -47,21 +47,23 @@ public class SendMessages
     public SendMessage sendDelayedMessage(long chatId)
     {
         SendMessage sendMessage = new SendMessage();
-        sendMessage.setText("\uD83D\uDCCB Что напомнить? Напишите сообщение:");
+        sendMessage.setParseMode("Markdown");
+        sendMessage.setText("📋 *Что напомнить?*\n" +
+                "Напишите сообщение, а в последней строке укажите дату и время для напоминания.\n\n" +
+                "📌 *Формат:* `DD.MM.YYYY HH:mm` \n" +
+                "*Например:* `31.01.1999 12:00`");
         sendMessage.setChatId(String.valueOf(chatId));
         return sendMessage;
     }
 
-    public SendMessage sendTimeMessage(long chatId, String message)
+    public SendMessage sendCompleteMessage(long chatId)
     {
         SendMessage sendMessage = new SendMessage();
-        sendMessage.setText("Сохранил ваше сообщение для напоминаний\uD83D\uDC4C \n" +
-                "напишите теперь дату когда нужно напомнить\uD83D\uDCCB \n" +
-                "P.S. пишите в таком формате DD.MM.YYYY HH.MM\n" +
-                "P.S.S расшифровка: день.месяц.год час.минута");
+        sendMessage.setText("Хорошо☺\uFE0F\n" +
+                "Я запомнил ваше сообщение и время\uD83D\uDCCE");
         sendMessage.setChatId(String.valueOf(chatId));
 
-        return  sendMessage;
+        return sendMessage;
     }
 
     public void setFirstName(String firstName) {
