@@ -5,9 +5,10 @@ import DB_Operations.GettingUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-@Component
+@Service
 @Scope("prototype")
 public class SendMessages
 {

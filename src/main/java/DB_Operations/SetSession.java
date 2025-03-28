@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+
 @Component
 public class SetSession {
     private SessionFactory sessionFactory;
@@ -26,13 +27,25 @@ public class SetSession {
         session = sessionFactory.getCurrentSession();
     }
 
-    @PreDestroy
-    private void close() {
-        if (session != null) session.close();
-        if (sessionFactory != null) sessionFactory.close();
-    }
+
 
     public Session getSession() {
+
+        if (session == null || !session.isOpen()) {
+
+            session = sessionFactory.getCurrentSession();
+        }
         return session;
+    }
+
+
+    @PreDestroy
+    public void cleanup() {
+        if (session != null && session.isOpen()) {
+            session.close();
+        }
+        if (sessionFactory != null) {
+            sessionFactory.close();
+        }
     }
 }
