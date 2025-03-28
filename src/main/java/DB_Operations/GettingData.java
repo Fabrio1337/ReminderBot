@@ -47,6 +47,7 @@ public class GettingData {
     @Transactional
     public User getUserByChatId(long chatId) {
         Session session = setSession.getSession();
+        session.beginTransaction();
         User user =(User) session.createQuery("FROM User WHERE UserChatId = :chatId")
                 .setParameter("chatId", chatId)
                 .uniqueResult();
@@ -56,6 +57,7 @@ public class GettingData {
             user.setChatId(chatId);
             session.persist(user);
         }
+        session.getTransaction().commit();
         return user;
     }
 

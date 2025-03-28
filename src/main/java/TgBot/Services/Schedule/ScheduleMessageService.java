@@ -1,20 +1,14 @@
 package TgBot.Services.Schedule;
 
+import DB_Operations.DeletionData;
 import DB_Operations.GettingData;
-import DB_Operations.SetSession;
 import Entity.Message;
-import Entity.User;
 import TgBot.Bot;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -22,50 +16,48 @@ import java.util.List;
 @Service
 public class ScheduleMessageService {
 
-    private SetSession setSession;
-
     private GettingData gettingData;
+
+    private DeletionData deletionData;
 
     private  Bot bot;
 
     @Autowired
-    public ScheduleMessageService(Bot bot, SetSession setSession, GettingData gettingData) {
+    public ScheduleMessageService(Bot bot, GettingData gettingData, DeletionData deletionData) {
         this.bot = bot;
-        this.setSession = setSession;
         this.gettingData = gettingData;
+        this.deletionData = deletionData;
     }
 
     public ScheduleMessageService() {}
 
-    @Transactional
+
     @Scheduled(fixedRate = 30000)
     public void scheduleMessage() {
         try {
             List<Message> messages = gettingData.getMessage(getCurrentDateAsString());
 
-            Session session = setSession.getSession();
 
-            session.beginTransaction();
 
-            for (Message message : messages) {
-                try {
-                    SendMessage telegramMessage = new SendMessage();
-                    telegramMessage.setChatId(String.valueOf(message.getUser().getChatId()));
-                    telegramMessage.setText("Вы просили напомнить\uD83D\uDE0A:\n" + message.getMessage());
+            if(messages != null && messages.size() > 0) {
 
-                    bot.execute(telegramMessage);
+                for (Message message : messages) {
+                    try {
+                        SendMessage telegramMessage = new SendMessage();
+                        telegramMessage.setChatId(String.valueOf(message.getUser().getChatId()));
+                        telegramMessage.setText("Вы просили напомнить\uD83D\uDE0A:\n" + message.getMessage());
 
-                    session.delete(message);
+                        deletionData.deleteMessage(message);
 
-                    session.flush();
+                        bot.execute(telegramMessage);
 
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
+
+                    } catch (TelegramApiException e) {
+                        e.printStackTrace();
+                    }
                 }
+
             }
-
-            session.getTransaction().commit();
-
         } catch (Exception e) {
            e.printStackTrace();
         }

@@ -24,7 +24,7 @@ public class Message {
     @Column(name = "is_delayed", nullable = false)
     private Boolean isDelayed = true;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -74,5 +74,11 @@ public class Message {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "⚪\uFE0F Сообщение = " + message  +
+                ", Время отправки = " + delayedMessageDate;
     }
 }

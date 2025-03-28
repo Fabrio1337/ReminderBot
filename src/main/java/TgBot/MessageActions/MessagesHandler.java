@@ -50,13 +50,10 @@ public class MessagesHandler {
 
             return sendMessages.sendDelayedMessage(chatId);
         }
-        else if(callbackData.equals("list_delayed"))
-        {
-            return null;
-        }
         else
         {
-            return null;
+
+            return sendMessages.sendListDelayedMessages(chatId);
         }
     }
 

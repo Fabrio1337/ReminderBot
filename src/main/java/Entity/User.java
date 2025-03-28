@@ -15,7 +15,7 @@ public class User {
     @Column(name = "user_chat_id")
     private long UserChatId;
 
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH},  fetch = FetchType.EAGER)
     private List<Message> messages;
 
     public User() {}
@@ -47,4 +47,6 @@ public class User {
     public void setMessages(List<Message> messages) {
         this.messages = messages;
     }
+
+
 }

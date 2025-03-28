@@ -23,19 +23,23 @@ public class SavingData {
     @Transactional
     public boolean saveMessage(String userMessage,String timeMessage, long chatId) {
         try {
+            User user = gettingData.getUserByChatId(chatId);
+
             Session session = setSession.getSession();
+
             session.beginTransaction();
 
-            User user = gettingData.getUserByChatId(chatId);
+
+            user = (User) session.merge(user);
 
             Message message = new Message(userMessage, timeMessage, true);
 
             message.setUser(user);
 
-
-
             session.persist(message);
+
             session.getTransaction().commit();
+
 
             return true;
         }

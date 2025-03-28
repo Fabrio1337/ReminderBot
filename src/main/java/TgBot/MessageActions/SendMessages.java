@@ -1,14 +1,28 @@
 package TgBot.MessageActions;
 
+import DB_Operations.GettingData;
+import Entity.Message;
+import Entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+
+import java.util.List;
 
 @Service
 @Scope("prototype")
 public class SendMessages
 {
     private String firstName;
+
+    private GettingData gettingData;
+
+    @Autowired
+    public SendMessages(GettingData gettingData)
+    {
+        this.gettingData = gettingData;
+    }
 
     public SendMessage sendSimpleMessage(long chatId)
     {
@@ -38,7 +52,7 @@ public class SendMessages
         sendMessage.setText("📋 *Что напомнить?*\n" +
                 "Напишите сообщение, а в последней строке укажите дату и время для напоминания.\n\n" +
                 "📌 *Формат:* `DD.MM.YYYY HH:mm` \n" +
-                "*Например:* `31.01.1999 12:00`");
+                "*Например:* '`01.01.1999 12:00`' ");
         sendMessage.setChatId(String.valueOf(chatId));
         return sendMessage;
     }
@@ -60,6 +74,31 @@ public class SendMessages
         sendMessage.setText("*❌ Вы ввели неправильную дату и время.*\n\n" +
                 "⏳ Пожалуйста, введите дату и время, которые _не раньше текущего момента_.");
         sendMessage.setParseMode("Markdown");
+
+        return sendMessage;
+    }
+
+    public SendMessage sendListDelayedMessages(long chatId)
+    {
+        SendMessage sendMessage = new SendMessage();
+        User user = gettingData.getUserByChatId(chatId);
+        List<Message> messages = user.getMessages();
+        StringBuilder builder = new StringBuilder();
+        if(messages != null)
+        {
+            builder.append("Ваши отложенные сообщения:\n");
+            for (Message message : messages)
+            {
+                builder.append(message.toString() + " \n");
+            }
+        }
+        else
+        {
+            builder.append("У вас нет отложенных сообщений!\uD83D\uDE22");
+        }
+
+        sendMessage.setText(builder.toString());
+        sendMessage.setChatId(String.valueOf(chatId));
 
         return sendMessage;
     }
