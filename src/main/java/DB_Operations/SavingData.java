@@ -12,10 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class SavingData {
 
     private final SetSession setSession;
+    private final GettingData gettingData;
 
     @Autowired
-    public SavingData(SetSession setSession) {
+    public SavingData(SetSession setSession, GettingData gettingData) {
         this.setSession = setSession;
+        this.gettingData = gettingData;
     }
 
     @Transactional
@@ -24,7 +26,7 @@ public class SavingData {
             Session session = setSession.getSession();
             session.beginTransaction();
 
-            User user = getUserByChatId(chatId);
+            User user = gettingData.getUserByChatId(chatId);
 
             Message message = new Message(userMessage, timeMessage, true);
 
@@ -43,18 +45,4 @@ public class SavingData {
         }
     }
 
-    @Transactional
-    public User getUserByChatId(long chatId) {
-        Session session = setSession.getSession();
-        User user =(User) session.createQuery("FROM User WHERE UserChatId = :chatId")
-                .setParameter("chatId", chatId)
-                .uniqueResult();
-
-        if (user == null) {
-            user = new User();
-            user.setChatId(chatId);
-            session.persist(user);
-        }
-        return user;
-    }
 }

@@ -12,8 +12,5 @@ import javax.annotation.PostConstruct;
 @EnableScheduling
 @EnableAspectJAutoProxy
 public class SpringServiceCfg {
-    @PostConstruct
-    public void init() {
-        System.out.println("Планировщик задач включен!");
-    }
+
 }

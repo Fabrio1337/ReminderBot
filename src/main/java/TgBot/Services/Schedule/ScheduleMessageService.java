@@ -1,5 +1,6 @@
 package TgBot.Services.Schedule;
 
+import DB_Operations.GettingData;
 import DB_Operations.SetSession;
 import Entity.Message;
 import Entity.User;
@@ -23,69 +24,50 @@ public class ScheduleMessageService {
 
     private SetSession setSession;
 
+    private GettingData gettingData;
 
-    @Autowired
     private  Bot bot;
 
     @Autowired
-    public ScheduleMessageService(Bot bot, SetSession setSession) {
+    public ScheduleMessageService(Bot bot, SetSession setSession, GettingData gettingData) {
         this.bot = bot;
         this.setSession = setSession;
-        System.out.println("ScheduleMessageService инициализирован!");
+        this.gettingData = gettingData;
     }
 
     public ScheduleMessageService() {}
 
     @Transactional
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 30000)
     public void scheduleMessage() {
         try {
+            List<Message> messages = gettingData.getMessage(getCurrentDateAsString());
+
             Session session = setSession.getSession();
-            System.out.println("в методе scheduleMessage");
-            String currentTime = getCurrentDateAsString();
 
             session.beginTransaction();
 
-            Query query = session.createQuery(
-                    "FROM Message m " +
-                            "WHERE m.delayedMessageDate = :currentDate AND m.isDelayed = true");
-            query.setParameter("currentDate", currentTime);
-
-            List<Message> messages = query.list();
-
-            if (messages.isEmpty()) {
-                System.out.println("Сообщений нет для отправки");
-            }
-
-            System.out.println("перед отправкой сообщений");
-
             for (Message message : messages) {
                 try {
-                    System.out.println("начало отправки для сообщения ID: " + message.getId());
-
                     SendMessage telegramMessage = new SendMessage();
                     telegramMessage.setChatId(String.valueOf(message.getUser().getChatId()));
                     telegramMessage.setText("Вы просили напомнить\uD83D\uDE0A:\n" + message.getMessage());
 
-
                     bot.execute(telegramMessage);
 
-
-                    message.setDelayed(false);
-                    session.update(message);
+                    session.delete(message);
 
                     session.flush();
 
-                    System.out.println("Сообщение отправлено: " + message.getId());
                 } catch (TelegramApiException e) {
-                    System.err.println("Ошибка отправки сообщения для ID: " + message.getId() + " - " + e.getMessage());
+                    e.printStackTrace();
                 }
             }
 
             session.getTransaction().commit();
 
         } catch (Exception e) {
-            System.err.println("Ошибка в scheduleMessage: " + e.getMessage());
+           e.printStackTrace();
         }
     }
 

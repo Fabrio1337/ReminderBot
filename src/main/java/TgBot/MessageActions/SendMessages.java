@@ -1,10 +1,6 @@
-package TgBot;
+package TgBot.MessageActions;
 
-import DB_Operations.GettingMessages;
-import DB_Operations.GettingUser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
@@ -12,16 +8,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 @Scope("prototype")
 public class SendMessages
 {
-    private GettingMessages gettingMessages;
-    private GettingUser gettingUser;
     private String firstName;
-
-    @Autowired
-    public SendMessages(GettingMessages gettingMessages, GettingUser gettingUser)
-    {
-        this.gettingMessages = gettingMessages;
-        this.gettingUser = gettingUser;
-    }
 
     public SendMessage sendSimpleMessage(long chatId)
     {

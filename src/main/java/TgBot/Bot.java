@@ -2,11 +2,8 @@ package TgBot;
 
 
 
-import SpringConfigs.SpringDBCfg;
-import SpringConfigs.SpringTGCfg;
-import TgBot.Services.Schedule.ScheduleMessageService;
+import TgBot.MessageActions.MessagesHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -64,16 +61,12 @@ public class Bot extends TelegramLongPollingBot {
                     execute(sendMessage);
                 }
 
-                System.out.println("сообщение отправлено");
-
             }
             if(update.hasCallbackQuery())
             {
 
                 long callbackChatId = update.getCallbackQuery().getMessage().getChatId();
                 String callbackData = update.getCallbackQuery().getData();
-
-                System.out.println("Полученный callbackData: " + callbackData);
 
                 SendMessage sendMessage = messagesHandler.callbackMessage(callbackChatId, callbackData);
 

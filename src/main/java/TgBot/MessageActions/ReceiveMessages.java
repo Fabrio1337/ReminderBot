@@ -1,15 +1,11 @@
-package TgBot;
+package TgBot.MessageActions;
 
 import DB_Operations.*;
 
 import Entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
-
-import java.util.List;
 
 @Service
 @Scope("prototype")

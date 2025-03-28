@@ -24,7 +24,7 @@ public class Message {
     @Column(name = "is_delayed", nullable = false)
     private Boolean isDelayed = true;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "user_id")
     private User user;
 
