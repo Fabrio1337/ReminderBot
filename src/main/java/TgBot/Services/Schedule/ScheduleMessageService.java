@@ -37,8 +37,6 @@ public class ScheduleMessageService {
         try {
             List<Message> messages = gettingData.getMessage(getCurrentDateAsString());
 
-
-
             if(messages != null && messages.size() > 0) {
 
                 for (Message message : messages) {
@@ -50,7 +48,6 @@ public class ScheduleMessageService {
                         deletionData.deleteMessage(message);
 
                         bot.execute(telegramMessage);
-
 
                     } catch (TelegramApiException e) {
                         e.printStackTrace();

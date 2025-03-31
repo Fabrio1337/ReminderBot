@@ -84,12 +84,12 @@ public class SendMessages
         User user = gettingData.getUserByChatId(chatId);
         List<Message> messages = user.getMessages();
         StringBuilder builder = new StringBuilder();
-        if(messages != null)
+        if(messages.size() != 0)
         {
             builder.append("Ваши отложенные сообщения:\n");
             for (Message message : messages)
             {
-                builder.append(message.toString() + " \n");
+                builder.append("⚪\uFE0F " + message.toString() + " \n");
             }
         }
         else

@@ -6,9 +6,12 @@ import TgBot.MessageActions.MessagesHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+
+import java.util.List;
 
 @Component
 public class Bot extends TelegramLongPollingBot {
@@ -18,7 +21,6 @@ public class Bot extends TelegramLongPollingBot {
 
     @Autowired
     private MessagesHandler messagesHandler;
-
 
     final private String BOT_TOKEN = "7902651303:AAFPjXFnWT3YFFTpHspVt_BUqET_plsAnwU";
     final private String BOT_NAME = "Rreminderr1Bot";
@@ -38,17 +40,27 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         try{
-            if(update.hasMessage() && update.getMessage().hasText())
-            {
+            if(update.hasMessage() && update.getMessage().hasText()) {
                 String messageText = update.getMessage().getText();
                 long chatId = update.getMessage().getChatId();
                 String firstName = update.getMessage().getFrom().getFirstName();
 
-                if(is_callback)
+                if (buttons.startWords().contains(messageText))
+                {
+                    is_callback = false;
+                    SendMessage sendMessage = messagesHandler.receiveMessage(messageText,
+                            chatId,
+                            buttons.setSimpleKeyboardMarkup(),
+                            buttons.startWords(),
+                            buttons.stopWords(),firstName );
+                    execute(sendMessage);
+                }
+                else if(is_callback)
                 {
                     SendMessage returnCallbackMessage = messagesHandler.saveMessageInDB(chatId, messageText);
-                    execute(returnCallbackMessage);
                     is_callback = messagesHandler.isCallback();
+                    execute(returnCallbackMessage);
+
                 }
                 else
                 {
@@ -72,7 +84,6 @@ public class Bot extends TelegramLongPollingBot {
 
                 execute(sendMessage);
 
-                System.out.println(is_callback);
 
                 is_callback = true;
 

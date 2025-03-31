@@ -97,6 +97,12 @@
             <version>3.25.0-GA</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr-complete</artifactId>
+            <version>3.5.2</version>
+        </dependency>
+
 
     </dependencies>
 

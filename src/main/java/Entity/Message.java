@@ -78,7 +78,7 @@ public class Message {
 
     @Override
     public String toString() {
-        return "⚪\uFE0F Сообщение = " + message  +
-                ", Время отправки = " + delayedMessageDate;
+        return "Сообщение = " + this.getMessage()  +
+                ", Время отправки = " + this.getDelayedMessageDate();
     }
 }
