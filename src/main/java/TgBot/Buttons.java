@@ -26,6 +26,17 @@ public class Buttons {
         return startWords;
     }
 
+    public String getListCommand()
+    {
+        return "/command";
+    }
+
+    public List<String> getCommands()
+    {
+        List<String> commands = List.of("/add","/remove","/list","add","remove","list");
+        return commands;
+    }
+
     public InlineKeyboardMarkup setSimpleKeyboardMarkup() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();

@@ -45,6 +45,17 @@ public class SendMessages
         return sendMessage;
     }
 
+    public SendMessage sendCommandMessage(long chatId)
+    {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setText("Мои команды:\n" +
+                "/add - добавить напоминание \n" +
+                "/list - посмотреть все напоминания\n" +
+                "/remove - удалить напоминание");
+        sendMessage.setChatId(String.valueOf(chatId));
+        return sendMessage;
+    }
+
     public SendMessage sendDelayedMessage(long chatId)
     {
         SendMessage sendMessage = new SendMessage();

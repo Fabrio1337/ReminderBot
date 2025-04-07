@@ -14,7 +14,7 @@ public class ReceiveMessages {
 
 
     @Autowired
-    public ReceiveMessages(SavingData savingData, SetSession setSession) {
+    public ReceiveMessages(SavingData savingData) {
         this.savingData = savingData;
 
     }
@@ -23,20 +23,5 @@ public class ReceiveMessages {
     public boolean saveMessage(String message, String timeMessage, long chatId) {
        return savingData.saveMessage(message, timeMessage, chatId);
     }
-
-    public boolean saveUser(User user) {
-        try
-        {
-
-            return  true;
-        }
-        catch(Exception e)
-        {
-            return false;
-        }
-    }
-
-
-
 
 }

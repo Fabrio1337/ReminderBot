@@ -37,6 +37,11 @@ public class MessagesHandler {
 
             return message;
         }
+        else if(messageText.equals("/command"))
+        {
+            SendMessage message = sendMessages.sendCommandMessage(chatId);
+            return message;
+        }
         else
         {
             return sendMessages.sendErrorMessage(chatId);
