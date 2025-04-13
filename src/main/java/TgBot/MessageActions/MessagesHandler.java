@@ -34,13 +34,27 @@ public class MessagesHandler {
 
             message.setReplyMarkup(keyboardMarkup);
 
+            is_callback = false;
 
             return message;
         }
         else if(messageText.equals("/command"))
         {
-            SendMessage message = sendMessages.sendCommandMessage(chatId);
-            return message;
+            return sendMessages.sendCommandMessage(chatId);
+        }
+        else if(messageText.equals("/add") || messageText.equals("add"))
+        {
+            is_callback = true;
+            return null;
+        }
+        else if(messageText.equals("/list") || messageText.equals("list"))
+        {
+            return null;
+        }
+        else if(messageText.equals("/remove") || messageText.equals("remove"))
+        {
+            is_callback = true;
+            return null;
         }
         else
         {

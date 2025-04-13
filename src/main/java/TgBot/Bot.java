@@ -45,9 +45,9 @@ public class Bot extends TelegramLongPollingBot {
                 long chatId = update.getMessage().getChatId();
                 String firstName = update.getMessage().getFrom().getFirstName();
 
-                if (buttons.startWords().contains(messageText))
+                if (buttons.startWords().contains(messageText) || buttons.getCommands().contains(messageText))
                 {
-                    is_callback = false;
+                    is_callback = messagesHandler.isCallback();
                     SendMessage sendMessage = messagesHandler.receiveMessage(messageText,
                             chatId,
                             buttons.setSimpleKeyboardMarkup(),
