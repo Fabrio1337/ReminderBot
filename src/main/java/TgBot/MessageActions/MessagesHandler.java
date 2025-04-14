@@ -45,11 +45,11 @@ public class MessagesHandler {
         else if(messageText.equals("/add") || messageText.equals("add"))
         {
             is_callback = true;
-            return null;
+            return  sendMessages.sendDelayedMessage(chatId);
         }
         else if(messageText.equals("/list") || messageText.equals("list"))
         {
-            return null;
+            return sendMessages.sendListDelayedMessages(chatId);
         }
         else if(messageText.equals("/remove") || messageText.equals("remove"))
         {
