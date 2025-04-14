@@ -33,7 +33,7 @@ public class Buttons {
 
     public List<String> getCommands()
     {
-        List<String> commands = List.of("/add","/remove","/list","add","remove","list");
+        List<String> commands = List.of("/add","/remove","/list","add","remove","list", "/command", "command");
         return commands;
     }
 

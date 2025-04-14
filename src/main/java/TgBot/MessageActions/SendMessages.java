@@ -30,6 +30,7 @@ public class SendMessages
 
         sendMessage.setText(firstName + ", Добро пожаловать!\n" +
                 "Я - бот для напоминаний \uD83D\uDE0A \n" +
+                "чтобы посмотреть все мои команды, напишите /command\n" +
                 "Если хотите  сразу отложить сообщение, то выберите: ");
         sendMessage.setChatId(String.valueOf(chatId));
 
@@ -53,6 +54,26 @@ public class SendMessages
                 "/list - посмотреть все напоминания\n" +
                 "/remove - удалить напоминание");
         sendMessage.setChatId(String.valueOf(chatId));
+        return sendMessage;
+    }
+
+    public SendMessage sendCompleteDeletedMessage(long chatId){
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(String.valueOf(chatId));
+        sendMessage.setText("Ваше сообщение удалено, и не будет отправлено позже*☺\uFE0F*\n\n");
+        sendMessage.setParseMode("Markdown");
+
+        return sendMessage;
+    }
+
+    public SendMessage sendErrorFormatMessage(long chatId)
+    {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(String.valueOf(chatId));
+        sendMessage.setText("*❌ Вы ввели неправильный ID.*\n\n" +
+                "Пожалуйста введите корректный ID для ваших сообщений.");
+        sendMessage.setParseMode("Markdown");
+
         return sendMessage;
     }
 
@@ -89,18 +110,27 @@ public class SendMessages
         return sendMessage;
     }
 
+    public SendMessage sendRemoveMessage(long chatId)
+    {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(String.valueOf(chatId));
+        sendMessage.setParseMode("Markdown");
+        sendMessage.setText("*❌Введите id сообщения которое хотите удалить.*\n\n");
+        return sendMessage;
+    }
+
     public SendMessage sendListDelayedMessages(long chatId)
     {
         SendMessage sendMessage = new SendMessage();
         User user = gettingData.getUserByChatId(chatId);
         List<Message> messages = user.getMessages();
         StringBuilder builder = new StringBuilder();
-        if(messages.size() != 0)
+        if(!messages.isEmpty())
         {
             builder.append("Ваши отложенные сообщения:\n");
             for (Message message : messages)
             {
-                builder.append("⚪\uFE0F " + message.toString() + " \n");
+                builder.append("⚪\uFE0F " + message.toString() + " \n\n");
             }
         }
         else

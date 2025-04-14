@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <hibernate-configuration>
     <session-factory>
-        <property name="connection.url">jdbc:postgresql://localhost:5433/my_db?useSSL=false</property>
+        <property name="connection.url">jdbc:postgresql://localhost:5433/reminder?useSSL=false</property>
         <property name="connection.driver_class">org.postgresql.Driver</property>
         <property name="connection.username">postgres</property>
         <property name="connection.password">0000</property>

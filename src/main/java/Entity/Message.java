@@ -78,7 +78,8 @@ public class Message {
 
     @Override
     public String toString() {
-        return "Сообщение = " + this.getMessage()  +
-                ", Время отправки = " + this.getDelayedMessageDate();
+        return "ID сообщения: " + this.getId() +
+                "\n Сообщение = " + this.getMessage()  +
+                "\n Время отправки = " + this.getDelayedMessageDate();
     }
 }

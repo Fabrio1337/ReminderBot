@@ -16,13 +16,17 @@ import java.util.List;
 public class MessagesHandler {
     private final SendMessages sendMessages;
     private final ReceiveMessages receiveMessages;
+    private final DeleteMessages deleteMessages;
     private boolean is_callback = false;
+    private boolean is_command = false;
+    private long message_id;
 
     @Autowired
-    MessagesHandler(SendMessages sendMessages, ReceiveMessages receiveMessages)
+    MessagesHandler(SendMessages sendMessages, ReceiveMessages receiveMessages, DeleteMessages deleteMessages)
     {
         this.sendMessages = sendMessages;
         this.receiveMessages = receiveMessages;
+        this.deleteMessages = deleteMessages;
     }
 
     public SendMessage receiveMessage(String messageText, long chatId, InlineKeyboardMarkup keyboardMarkup,  List<String> startWords, List<String> stopWords,  String firstName)
@@ -34,30 +38,37 @@ public class MessagesHandler {
 
             message.setReplyMarkup(keyboardMarkup);
 
-            is_callback = false;
+            setIs_callback(false);
+            setIs_command(false);
 
             return message;
         }
-        else if(messageText.equals("/command"))
+        else if(messageText.equals("/command") || messageText.equals("command"))
         {
+            setIs_callback(false);
+            setIs_command(false);
             return sendMessages.sendCommandMessage(chatId);
         }
         else if(messageText.equals("/add") || messageText.equals("add"))
         {
-            is_callback = true;
+            setIs_callback(true);
+            setIs_command(false);
             return  sendMessages.sendDelayedMessage(chatId);
         }
         else if(messageText.equals("/list") || messageText.equals("list"))
         {
+            setIs_command(false);
             return sendMessages.sendListDelayedMessages(chatId);
         }
         else if(messageText.equals("/remove") || messageText.equals("remove"))
         {
-            is_callback = true;
-            return null;
+            setIs_command(true);
+            return sendMessages.sendRemoveMessage(chatId);
         }
         else
         {
+            setIs_callback(false);
+            setIs_command(false);
             return sendMessages.sendErrorMessage(chatId);
         }
     }
@@ -79,6 +90,27 @@ public class MessagesHandler {
     public SendMessage saveMessageInDB(long chatId,String message)
     {
         return messageSplit(message, chatId);
+    }
+
+    public SendMessage removeMessageInDB(String message, long chatId)
+    {
+        try
+        {
+            boolean is_deleted = deleteMessages.deleteMessage(Long.parseLong(message), chatId);
+            if(is_deleted)
+            {
+                setIs_command(false);
+                return sendMessages.sendCompleteDeletedMessage(chatId);
+            }
+            else
+            {
+                return sendMessages.sendErrorFormatMessage(chatId);
+            }
+        }
+        catch (NumberFormatException e)
+        {
+            return sendMessages.sendErrorFormatMessage(chatId);
+        }
     }
 
     private SendMessage messageSplit(String message, long chatId)
@@ -129,7 +161,15 @@ public class MessagesHandler {
         return is_callback;
     }
 
+    public boolean isCommand() {
+        return is_command;
+    }
 
+    public void setIs_command(boolean is_command) {
+        this.is_command = is_command;
+    }
 
-
+    public void setMessage_id(long message_id) {
+        this.message_id = message_id;
+    }
 }

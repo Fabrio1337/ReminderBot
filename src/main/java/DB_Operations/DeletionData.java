@@ -31,13 +31,34 @@ public class DeletionData {
     }
 
     @Transactional
-    public void deleteUser(User user)
+    public boolean deleteMessage(long id, long userId)
     {
-        Session session = setSession.getSession();
-        session.beginTransaction();
+        try {
+            Session session = setSession.getSession();
 
-        session.delete(user);
+            session.beginTransaction();
 
-        session.getTransaction().commit();
+            int affectedRows = session.createQuery("delete from Message where id = :id and user.id = :userId")
+                    .setParameter("id",(int) id)
+                    .setParameter("userId",(int) userId)
+                    .executeUpdate();
+
+
+            session.getTransaction().commit();
+
+            if(affectedRows > 0)
+            {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
     }
+
 }

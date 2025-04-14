@@ -6,12 +6,10 @@ import TgBot.MessageActions.MessagesHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-import java.util.List;
 
 @Component
 public class Bot extends TelegramLongPollingBot {
@@ -22,10 +20,11 @@ public class Bot extends TelegramLongPollingBot {
     @Autowired
     private MessagesHandler messagesHandler;
 
-    final private String BOT_TOKEN = "7902651303:AAFPjXFnWT3YFFTpHspVt_BUqET_plsAnwU";
+    final private String BOT_TOKEN = "7600893575:AAFc6McadnqNN1uyZK7-waK4y17FMlli0dA";
     final private String BOT_NAME = "Rreminderr1Bot";
 
     private boolean is_callback = false;
+    private boolean is_command = false;
 
     @Override
     public String getBotUsername() {
@@ -47,12 +46,19 @@ public class Bot extends TelegramLongPollingBot {
 
                 if (buttons.startWords().contains(messageText) || buttons.getCommands().contains(messageText))
                 {
-                    is_callback = messagesHandler.isCallback();
                     SendMessage sendMessage = messagesHandler.receiveMessage(messageText,
                             chatId,
                             buttons.setSimpleKeyboardMarkup(),
                             buttons.startWords(),
                             buttons.stopWords(),firstName );
+                    is_callback = messagesHandler.isCallback();
+                    is_command = messagesHandler.isCommand();
+                    execute(sendMessage);
+                }
+                else if(is_command)
+                {
+                    SendMessage sendMessage = messagesHandler.removeMessageInDB(messageText, chatId);
+                    is_command = messagesHandler.isCommand();
                     execute(sendMessage);
                 }
                 else if(is_callback)
